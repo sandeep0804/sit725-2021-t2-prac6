@@ -1,0 +1,23 @@
+{
+  "name": "sit725-2021-t2-prac3",
+  "version": "1.0.0",
+  "description": "week 3 prac",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node server.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/sandeep0804/sit725-2021-t2-prac3.git"
+  },
+  "author": "Sandeep",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/sandeep0804/sit725-2021-t2-prac3/issues"
+  },
+  "homepage": "https://github.com/sandeep0804/sit725-2021-t2-prac3#readme",
+  "dependencies": {
+    "express": "^4.17.1"
+  }
+}
