@@ -29,3 +29,15 @@
 nav {
   background-color: rgba(27, 133, 231, 0.459);
 }
+
+#formSubmit {
+  background-color: #24a0ed;
+}
+
+.lidin {
+  background-color: #24a0ed;
+}
+
+.lidin:hover {
+  background-color: #1565c0;
+}
