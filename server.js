@@ -1,91 +1,43 @@
-require('dotenv').config()
-var express = require("express")
-var app = express()
-const MongoClient = require('mongodb').MongoClient;
-let projectCollection;
+let express = require("express");
+let app = express();
+let dbConnect = require("./dbConnect");
 
-const uri = "mongodb+srv://sit725-2021:sandy123@sit725-2021-t2-prac4.4epn1.mongodb.net/sit725-2021-t2-prac4?retryWrites=true&w=majority"
-const client = new MongoClient(uri,{ useNewUrlParser: true})
+//dbConnect.dbConnect()
+//var app = require('express')();
+let http = require('http').createServer(app);
+let io = require('socket.io')(http);
+//const MongoClient = require('mongodb').MongoClient;
 
-app.use(express.static(__dirname + '/public'))
+// routes
+let projectsRoute = require('./routes/projects')
+
+
+var port = process.env.PORT || 5000;
 app.use(express.json());
-app.use(express.urlencoded({ extended: false }));
+app.use(express.static(__dirname + '/public'));
+app.use('/api/projects', projectsRoute)
 
-const createColllection = (collectionName) => {
-    client.connect((err,db) => {
-        projectCollection = client.db().collection(collectionName);
-        if(!err) {
-            console.log('MongoDB Connected')
-        }
-        else {
-            console.log("DB Error: ", err);
-            process.exit(1);
-        }
-    })
-} 
 
-const cardList = [
-    //  {
-    //     title: "MangoDB",
-    //     image: "images/mongo.png",
-    //     link: "About MangoDB Course",
-    //     desciption: "2months course <br> 30000+ registered users <br> $200"
-    // },
-    // {
-    //     title: "Express JS",
-    //     image: "images/ejs.png",
-    //     link: "About Express JS Course",
-    //     desciption: "2months course <br> 30000+ registered users <br> $300"
-    // },
-    // {
-    //     title: "React JS",
-    //     image: "images/react.png",
-    //     link: "About React JS Course",
-    //     desciption: "2months course <br> 60000+ registered users <br> $500"
-    // },
-    // {
-    //     title: "Node JS",
-    //     image: "images/node.png",
-    //     link: "About Node JS Course",
-    //     desciption: "2months course <br> 20000+ registered users <br> $300"
-    // }
-]
+app.get("/test", function (request, response) {
+    var user_name = request.query.user_name;
+    response.end("Hello " + user_name + "!");
+});
 
-const insertProjects = (project,callback) => {
-    projectCollection.insert(project,callback);
-}
 
-const getProjects = (callback) => {
-    projectCollection.find({}).toArray(callback);
-}
+//socket test
+io.on('connection', (socket) => {
+    console.log('a user connected');
+    socket.on('disconnect', () => {
+        console.log('user disconnected');
+    });
+    setInterval(() => {
+        socket.emit('number', parseInt(Math.random() * 10));
+    }, 1000);
 
-app.get('/api/projects',(req,res) => {
-    getProjects((err,result) => {
-        if(err) {
-            res.json({statusCode: 400, message:err})
-        }
-        else {
-             res.json({statusCode: 200, message:"Success", data: result})
-        }
-     })
-})
+});
 
-app.post('/api/projects',(req,res) => {
-    console.log("New Project added", req.body)
-    var newProject = req.body;
-    insertProjects(newProject,(err,result) => {
-        if(err) {
-            res.json({statusCode: 400, message: err})
-      }
-        else {
-            res.json({statusCode: 200, message:"Project Successfully addedd", data: result})
-        }
-     })
-})
 
-var port = process.env.port || 3000;
+http.listen(port, () => {
+    console.log("Listening on port ", port);
+});
 
-app.listen(port, () => {
-    console.log("App listening to: " + port);
-    createColllection("New Course")
-})
